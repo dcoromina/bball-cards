@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/components/data.js",
-    "src/components/modal.js",
+    "src/components/modal.jsx",
     "src/components/cardPacks.jsx"
   ],
   "exclude": ["node_modules"]

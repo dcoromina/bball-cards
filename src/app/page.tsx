@@ -1,16 +1,34 @@
+"use client";
 import Image from "next/image";
 import CardGrid from "./grid/cardGrid";
 import LeagueNav from "./leagueNav";
 import CardPacks from "@/components/cardPacks";
 import MainInfo from "@/components/mainInfo";
+import TestCard from "@/components/test";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col w-full h-full">
-      <MainInfo />
-      <div className="flex  items-center  justify-center min-h-fit h-fit p-8  gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <CardPacks />
-      </div>
-    </div>
-  );
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession(); // Fetch session
+      if (!data?.session?.user) {
+        router.push("/signin"); // Redirect if not logged in
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return <TestCard />;
 }

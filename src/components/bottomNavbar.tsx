@@ -32,7 +32,7 @@ const FloatingNavBar = () => {
     if (route === "home") {
       router.push("/");
     } else {
-      router.push("/profile");
+      router.push("/cards");
     }
   };
 

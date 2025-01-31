@@ -9,7 +9,6 @@ import packNba from "/public/pack-nba.png";
 import packEuro from "/public/pack-euro.png";
 import Cards from "@/components/data";
 import Modal from "@/components/modal";
-import { motion } from "motion/react";
 
 const packs = [
   { id: 1, category: "nba", logo: NBA, bg: packNba },
@@ -31,7 +30,7 @@ export default function CardPacks() {
   };
 
   return (
-    <div className="flex bottom-0 items-center  gap-3">
+    <div className="flex bottom-0 items-center justify-center gap-3">
       {packs.map((p) => (
         <div
           style={{ backgroundImage: `url(${p.bg})` }}
@@ -42,22 +41,20 @@ export default function CardPacks() {
           <Image
             className="w-fit h-full rotate-1"
             alt="s"
-            width={50}
-            height={50}
+            width={100}
+            height={100}
             src={p.bg}
           />
         </div>
       ))}
-      <motion.div
-        animate={{ rotate: 180 }}
-        transition={{ type: "spring", restDelta: 0.5 }}
-      >
+      <div>
         <Modal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          content={finalResults || {}}
+          content={finalResults}
+          pack={packs}
         />
-      </motion.div>
+      </div>
     </div>
   );
 }

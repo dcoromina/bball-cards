@@ -2,24 +2,21 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import Cards from "@/components/data";
+import NBA from "/public/images/nba.png";
+import EuroLeague from "/public/images/euroleague.png";
+import NCAA from "/public/images/ncaa.png";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { X, Info } from "lucide-react";
 import Modal from "@/components/modal";
 
-{
-  /* <div
-key={i}
-className="border-white border-solid border-[1px] w-[45%] h-40"
->
-<p>{i}</p>
-</div> */
-}
-
 export default function CardGrid() {
   const [zoomedId, setZoomedId] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [variantName, setVariantName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [league, setLeague] = useState("nba");
+  const selectedLeague = "nba";
 
   const handleImageClick = (id) => {
     if (zoomedId === id) {
@@ -41,22 +38,51 @@ export default function CardGrid() {
     setShowDetails(false);
   };
 
-  const handleItemClick = (id: number | React.SetStateAction<null>) => {
+  const handleItemClick = (
+    id: number | React.SetStateAction<null>,
+    name: string
+  ) => {
     setSelectedId(id);
+    setVariantName(name);
     setIsModalOpen(true);
   };
 
+  const filteredCards = Cards.filter(
+    (c) => c.pack === league && c.variant === "regular"
+  );
+
   return (
-    <div
-      className={`h-dvh w-full flex flex-wrap gap-3 justify-center  ${
-        zoomedId !== null ? "overflow-hidden" : ""
-      } `}
-    >
-      {Cards.map((c) => (
+    <div className="">
+      <div className="grid grid-cols-3 grid-rows-1 gap-4 mb-10 align-middle justify-center items-center">
         <div
-          key={c.id}
-          onClick={() => handleItemClick(c.id)}
-          className={`w-36 h-fit
+          onClick={() => setLeague("nba")}
+          className="hover:scale-105 cursor-pointer transition-all"
+        >
+          <Image alt="skdlasf" width={50} height={50} src={NBA} />
+        </div>
+        <div
+          onClick={() => setLeague("ncaa")}
+          className="hover:scale-105 cursor-pointer transition-all"
+        >
+          <Image alt="skdlasf" width={50} height={50} src={NCAA} />
+        </div>
+        <div
+          onClick={() => setLeague("euro")}
+          className="hover:scale-105 cursor-pointer transition-all"
+        >
+          <Image alt="skdlasf" width={50} height={50} src={EuroLeague} />
+        </div>
+      </div>
+      <div
+        className={`h-dvh w-full flex flex-wrap gap-3 justify-center  ${
+          zoomedId !== null ? "overflow-hidden" : ""
+        } `}
+      >
+        {filteredCards.map((c) => (
+          <div
+            key={c.id}
+            onClick={() => handleItemClick(c.id, c.name)}
+            className={`w-36 h-fit
                 cursor-pointer 
                 transition-all 
                 duration-300 
@@ -71,18 +97,18 @@ export default function CardGrid() {
                   : "opacity-100"
               }
               `}
-        >
-          <Image
-            alt="sda"
-            width={500}
-            height={500}
-            src={c.image}
-            className="rounded-md"
-          />
+          >
+            <Image
+              alt="sda"
+              width={500}
+              height={500}
+              src={c.image}
+              className="rounded-md"
+            />
 
-          {zoomedId === c.id && showDetails && (
-            <div
-              className="
+            {zoomedId === c.id && showDetails && (
+              <div
+                className="
                     absolute inset-0 
                     bg-slate-500
                     rounded-lg 
@@ -90,45 +116,30 @@ export default function CardGrid() {
                     overflow-y-auto
                     shadow-xl
                   "
-              onClick={() => handleBackgroundClick()}
-            >
-              <h2 className="text-2xl font-bold mb-4">{c.name}</h2>
-              <div className="space-y-3">
-                <p className="font-semibold">
-                  Location:
-                  <span className="font-normal ml-2">{c.number}</span>
-                </p>
-                <p className="font-semibold">
-                  Date:
-                  <span className="font-normal ml-2">{c.team}</span>
-                </p>
+                onClick={() => handleBackgroundClick()}
+              >
+                <h2 className="text-2xl font-bold mb-4">{c.name}</h2>
+                <div className="space-y-3">
+                  <p className="font-semibold">
+                    Location:
+                    <span className="font-normal ml-2">{c.number}</span>
+                  </p>
+                  <p className="font-semibold">
+                    Date:
+                    <span className="font-normal ml-2">{c.team}</span>
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-          {zoomedId === c.id && (
-            <button
-              onClick={closeClick}
-              className="
-                  absolute -top-2 -right-2
-                  bg-white text-gray-800 
-                  rounded-full p-1 
-                  shadow-lg 
-                  hover:bg-gray-100 
-                  transition-colors
-                  z-50
-                "
-              aria-label="Close"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
-        </div>
-      ))}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        content={Cards.find((card) => card.id === selectedId) || {}}
-      />
+            )}
+          </div>
+        ))}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          content={Cards.find((card) => card.id === selectedId) || {}}
+          variants={Cards.find((card) => variantName === card.name) || {}}
+        />
+      </div>
     </div>
   );
 }
