@@ -1,12 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import {
-  AnimatePresence,
-  delay,
-  motion,
-  stagger,
-  useAnimation,
-} from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import NBA from "/public/images/nba.png";
 import EuroLeague from "/public/images/euroleague.png";
@@ -41,25 +35,22 @@ const CardOpeningPage = () => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleLogout = async () => {
-    // Sign out the user using Supabase
     await supabase.auth.signOut();
-
-    // Optionally redirect to the login page after logout
     router.push("/signin");
   };
 
   const cardVariants = {
     initial: {
-      y: -100, // Start below the pack
-      opacity: 0, // Hidden initially
-      scale: 0.8, // Smaller initially
-      rotate: -10, // Slight rotation
+      y: -100,
+      opacity: 0,
+      scale: 0.8,
+      rotate: -10,
     },
     animate: {
-      y: -20, // Slide up
-      opacity: 1, // Fully visible
-      scale: 1, // Normal size
-      rotate: 0, // Straight orientation
+      y: -20,
+      opacity: 1,
+      scale: 1,
+      rotate: 0,
       transition: {
         type: "spring",
         stiffness: 200,
@@ -69,25 +60,40 @@ const CardOpeningPage = () => {
     },
     exit: {
       opacity: 0,
-      y: -200, // Moves up and fades away
+      y: -200,
       transition: { duration: 0.5 },
     },
   };
 
-  const handleFlip = async () => {
-    setIsFlipped((prev) => !prev);
-    // Animation sequence
-    await controls.start({ rotateY: 90, transition: { duration: 0.3 } });
-    controls.start({
-      rotateY: isFlipped ? 0 : 180,
-      transition: { duration: 0.3 },
-    });
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
   };
 
   const packs = [
-    { id: 1, category: "nba", logo: NBA, bg: packNba },
-    { id: 2, category: "euro", logo: EuroLeague, bg: packEuro },
-    { id: 3, category: "ncaa", logo: NCAA, bg: packNcaa },
+    {
+      id: 1,
+      category: "nba",
+      logo: NBA,
+      bg: packNba,
+      name: "NBA Premium",
+      cardCount: 5,
+    },
+    {
+      id: 2,
+      category: "euro",
+      logo: EuroLeague,
+      bg: packEuro,
+      name: "EuroLeague Elite",
+      cardCount: 5,
+    },
+    {
+      id: 3,
+      category: "ncaa",
+      logo: NCAA,
+      bg: packNcaa,
+      name: "NCAA Stars",
+      cardCount: 5,
+    },
   ];
 
   const handlePackSelect = (pack) => {
@@ -96,8 +102,8 @@ const CardOpeningPage = () => {
     setRevealCards(false);
     const filtered = Cards.filter((card) => card.pack === pack);
     const randomIndex = Math.floor(Math.random() * filtered.length);
-    const selectedCard = filtered[randomIndex]; // Get the actual card
-    setFinalResults(selectedCard); // Store the entire card object
+    const selectedCard = filtered[randomIndex];
+    setFinalResults(selectedCard);
   };
 
   const handleRipStart = () => setIsRipping(true);
@@ -108,249 +114,352 @@ const CardOpeningPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-600 to-blue-500">
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
-      >
-        Logout
-      </button>
-      {!selectedPack ? (
-        <div className="grid grid-cols-3 gap-4">
-          {packs.map((pack) => (
-            <div
-              style={{ backgroundImage: `url(${pack.bg})` }}
-              key={pack.id}
-              className="  w-72  h-[420px] rounded-md  hover:scale-110 transition-all shadow-lg "
-              onClick={() => handlePackSelect(pack.category)}
-            >
-              <Image
-                className="w-fit h-auto rotate-1 rounded-md"
-                alt="s"
-                width={500}
-                height={500}
-                src={pack.bg}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="relative flex flex-col items-center">
-          <AnimatePresence>
-            {!revealCards ? (
-              <motion.div
-                key={"pack"}
-                className=" relative w-72 h-96 bg-red-500 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-xl  overflow-hidden"
-                initial={{ scale: 1 }}
-                animate={isRipping ? { scale: 1.05 } : {}}
-                onPanStart={handleRipStart}
-                onPanEnd={handleRipEnd}
-                exit={{
-                  position: "absolute",
-                  y: 300,
-                  transition: { duration: 0.5 },
-                  rotate: 5,
-                  x: -50,
-                  opacity: 1,
-                  duration: 0,
-                }}
-              >
-                <motion.div
-                  className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-red-700 to-red-500 z-20"
-                  style={{
-                    backgroundImage: `url("/public/pack-ncaa.png")`, // Correctly set the background image
-                    backgroundSize: "cover", // Ensures the image covers the div
-                    backgroundPosition: "center", // Centers the image
-                  }}
-                  animate={isRipping ? { rotate: 0 } : { rotate: 0 }}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 flex flex-col">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-indigo-800 to-purple-900 p-4 shadow-md flex justify-between items-center">
+        <h1 className="text-white text-xl font-bold">Card Collection</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center space-x-1 text-sm"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          <span>Logout</span>
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        {!selectedPack ? (
+          <div className="flex flex-col items-center">
+            <h2 className="text-white text-2xl font-bold mb-8">
+              Choose a Pack
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {packs.map((pack) => (
+                <div
+                  key={pack.id}
+                  className="group relative overflow-hidden rounded-xl cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-2xl"
+                  onClick={() => handlePackSelect(pack.category)}
                 >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70 z-10"></div>
+                  <Image
+                    className="w-full h-auto rounded-xl"
+                    alt={pack.name}
+                    width={300}
+                    height={420}
+                    src={pack.bg}
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white z-20">
+                    <div className="flex items-center mb-2">
+                      <Image
+                        src={pack.logo}
+                        alt="logo"
+                        width={30}
+                        height={30}
+                        className="mr-2"
+                      />
+                      <h3 className="font-bold text-xl">{pack.name}</h3>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span>{pack.cardCount} cards per pack</span>
+                      <span className="bg-indigo-600 py-1 px-2 rounded group-hover:bg-indigo-500 transition-colors">
+                        Select
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="relative flex flex-col items-center max-w-md mx-auto">
+            <AnimatePresence>
+              {/* Card Opening */}
+              {!revealCards ? (
+                <motion.div
+                  key={"pack"}
+                  className="relative w-72 h-[27rem] bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg shadow-2xl flex items-center justify-center overflow-hidden"
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{
+                    position: "absolute",
+                    y: 300,
+                    transition: { duration: 0.5 },
+                    rotate: 5,
+                    x: -50,
+                    opacity: 0,
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-40 z-10"></div>
                   <motion.div
-                    className="h-3 bg-red-700 w-full"
-                    style={{ originY: 1 }}
-                    animate={
-                      isRipping
-                        ? {
-                            x: "93%",
-                            transition: { duration: 1, ease: "easeInOut" },
-                          }
-                        : { rotateX: 0 }
-                    }
+                    className="absolute top-0 left-0 w-full h-full z-20"
+                    style={{
+                      backgroundImage: `url(${
+                        packs.find((p) => p.category === selectedPack)?.bg.src
+                      })`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    animate={isRipping ? { scale: 1.05, opacity: 0.9 } : {}}
+                  >
+                    <motion.div
+                      className="h-3 bg-white/10 w-full"
+                      style={{ originY: 1 }}
+                      animate={
+                        isRipping
+                          ? {
+                              x: "93%",
+                              transition: { duration: 1, ease: "easeInOut" },
+                            }
+                          : { rotateX: 0 }
+                      }
+                    />
+                  </motion.div>
+                  <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-white text-center p-4"
+                    >
+                      <h3 className="font-bold text-xl mb-2">
+                        {packs.find((p) => p.category === selectedPack)?.name}
+                      </h3>
+                      <p className="text-sm text-white/80">
+                        Tap and hold to rip open
+                      </p>
+                    </motion.div>
+                  </div>
+                  <div
+                    className="absolute inset-0 z-40 cursor-pointer"
+                    onTouchStart={handleRipStart}
+                    onTouchEnd={handleRipEnd}
+                    onMouseDown={handleRipStart}
+                    onMouseUp={handleRipEnd}
+                    onMouseLeave={() => setIsRipping(false)}
                   />
                 </motion.div>
-              </motion.div>
-            ) : (
-              <motion.div
-                id="card"
-                className=" w-72  h-[420px] "
-                variants={cardVariants}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={{ duration: 1 }}
-                onClick={handleFlip}
-              >
+              ) : (
                 <motion.div
-                  className="w-full h-full p-2 bg-white rounded-lg shadow-md z-10"
-                  style={{ transformStyle: "preserve-3d" }}
-                  animate={controls}
+                  id="card"
+                  className="w-72 h-[420px]"
+                  variants={cardVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 1 }}
+                  onClick={handleFlip}
+                  whileHover={{ scale: 1.03 }}
                 >
-                  {/* Front Face */}
-                  {finalResults.variant === "poster" ? (
-                    <div
-                      className=""
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      {!isHovered && (
-                        <div className="">
-                          <Image
-                            className="h-full w-full  rounded-md relative top-0 left-0"
-                            alt="alt"
-                            src={finalResults.image}
-                            style={{ backfaceVisibility: "hidden" }}
-                          />
-                          <motion.div
-                            initial={{
-                              opacity: 0,
-                              scale: 0.5,
-                              y: -350,
-                              x: 30,
-                            }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 200,
-                              damping: 20,
-                              duration: 0.9,
-                              delay: 0.3,
-                            }}
-                          >
-                            <Image
-                              alt=""
-                              src={camera}
-                              className="absolute z-50 -top-7 -right-3 w-24 rotate-12"
-                            />
-                          </motion.div>
-                        </div>
-                      )}
+                  {!isFlipped ? (
+                    <div className="w-full h-fit bg-white rounded-xl shadow-2xl overflow-hidden">
+                      {finalResults.variant === "poster" ? (
+                        <div
+                          className="w-full h-full relative"
+                          onMouseEnter={() => setIsHovered(true)}
+                          onMouseLeave={() => setIsHovered(false)}
+                        >
+                          {!isHovered && (
+                            <div className="w-full h-full relative">
+                              <Image
+                                className="h-full w-full rounded-xl object-cover"
+                                alt="Card Front"
+                                src={finalResults.image}
+                              />
+                              <motion.div
+                                initial={{
+                                  opacity: 0,
+                                  scale: 0.5,
+                                  y: -350,
+                                  x: 30,
+                                }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 200,
+                                  damping: 20,
+                                  duration: 0.9,
+                                  delay: 0.3,
+                                }}
+                                className="absolute z-10"
+                              >
+                                <Image
+                                  alt="Camera"
+                                  src={camera}
+                                  className="absolute -top-7 -right-3 w-24 rotate-12"
+                                />
+                              </motion.div>
+                              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent">
+                                <p className="text-white text-sm">
+                                  Tap to see card details
+                                </p>
+                              </div>
+                            </div>
+                          )}
 
-                      {/* Video on Hover */}
-                      {isHovered && (
-                        <div className="bg-white">
-                          <video
-                            src={"/videos/vidja.mp4"}
-                            className="absolute inset-0 w-full h-full object-cover z-20 rounded-lg p-1"
-                            autoPlay
-                            muted
-                            loop
+                          {/* Video on Hover */}
+                          {isHovered && (
+                            <div className="absolute inset-0 bg-black rounded-xl overflow-hidden">
+                              <video
+                                src={"/videos/vidja.mp4"}
+                                className="absolute inset-0 w-full h-full object-cover rounded-xl"
+                                autoPlay
+                                muted
+                                loop
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="relative w-full h-full">
+                          <Image
+                            className="h-full w-full rounded-xl object-cover"
+                            alt="Card Front"
+                            src={finalResults.image}
                           />
+                          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent">
+                            <p className="text-white text-sm">
+                              Tap to see card details
+                            </p>
+                          </div>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <Image
-                      className="h-full w-full  rounded-md relative top-0 left-0"
-                      alt="alt"
-                      src={finalResults.image}
-                      style={{ backfaceVisibility: "hidden" }}
-                    />
-                  )}
-
-                  {/* Back Face */}
-
-                  <motion.div
-                    className="absolute w-full h-full top-0 rounded-lg  left-0 flex items-center justify-center text-white font-bold text-xl"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      transform: "rotateY(180deg)",
-                    }}
-                  >
-                    <div
-                      className="
-                      overflow-y-hidden
-                    bg-white
-                    rounded-lg 
-                    p-2
-                    shadow-xl
-                    w-full
-                    h-full
-                  "
-                    >
-                      <div className="bg-gray-600 w-full h-full rounded-md p-2">
-                        <div className="flex flex-row">
-                          {" "}
-                          <h2 className="text-2xl font-bold mb-4">
+                    <div className="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden">
+                      <div className="h-full bg-gradient-to-br from-gray-800 to-gray-900 p-4 flex flex-col">
+                        <div className="flex items-center justify-between mb-4">
+                          <h2 className="text-2xl font-bold text-white">
                             {finalResults.name}
                           </h2>
+                          <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded">
+                            {finalResults.pack?.toUpperCase()}
+                          </div>
                         </div>
 
-                        <div className="space-y-3">
-                          <p className="font-semibold">
-                            Num:
-                            <span className="font-normal ml-2">
-                              {finalResults.number}
-                            </span>
-                          </p>
-                          <p className="font-semibold">
-                            Team:
-                            <span className="font-normal ml-2">
-                              {finalResults.team}
-                            </span>
-                          </p>
+                        <div className="bg-gray-700/50 rounded-lg p-3 mb-4">
+                          <div className="grid grid-cols-2 gap-2 text-white">
+                            <div>
+                              <p className="text-gray-400 text-xs">NUMBER</p>
+                              <p className="font-semibold">
+                                {finalResults.number}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-gray-400 text-xs">TEAM</p>
+                              <p className="font-semibold">
+                                {finalResults.team}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="inline-grid grid-rows-6 grid-cols-3 place-items-center w-full  ">
-                          {" "}
-                          <div className="h-20 w-20 relative" id="allstar">
-                            <Image
-                              className="relative w-fit h-fit"
-                              alt=""
-                              src={allstar}
-                              height={500}
-                              width={500}
-                            />
-                            <p className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-black ">
-                              18
-                            </p>
+
+                        <div className="flex-1">
+                          <p className="text-gray-400 text-xs mb-2">
+                            ACHIEVEMENTS
+                          </p>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
+                              <div className="relative h-12 w-12 mb-1">
+                                <Image
+                                  className="object-contain"
+                                  alt="All Star"
+                                  src={allstar}
+                                  fill
+                                />
+                              </div>
+                              <p className="text-indigo-400 font-bold text-center">
+                                18
+                              </p>
+                              <p className="text-gray-400 text-xs text-center">
+                                All Star
+                              </p>
+                            </div>
+                            <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
+                              <div className="relative h-12 w-12 mb-1">
+                                <Image
+                                  className="object-contain"
+                                  alt="Championships"
+                                  src={champ}
+                                  fill
+                                />
+                              </div>
+                              <p className="text-indigo-400 font-bold text-center">
+                                4
+                              </p>
+                              <p className="text-gray-400 text-xs text-center">
+                                Champ
+                              </p>
+                            </div>
+                            <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
+                              <div className="relative h-12 w-12 mb-1">
+                                <Image
+                                  className="object-contain"
+                                  alt="MVP"
+                                  src={mvp}
+                                  fill
+                                />
+                              </div>
+                              <p className="text-indigo-400 font-bold text-center">
+                                3
+                              </p>
+                              <p className="text-gray-400 text-xs text-center">
+                                MVP
+                              </p>
+                            </div>
                           </div>
-                          <div className="h-20 w-20  relative" id="champ">
-                            <Image
-                              className="relative w-fit h-full top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2"
-                              alt=""
-                              src={champ}
-                              height={500}
-                              width={500}
-                            />
-                            <p className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-black ">
-                              4
-                            </p>
-                          </div>
-                          <div className="h-20 w-20 relative" id="mvp">
-                            <Image
-                              className="relative h-full w-fit top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2"
-                              alt=""
-                              src={mvp}
-                            />
-                            <p className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-black ">
-                              3
-                            </p>
-                          </div>
+                        </div>
+
+                        <div className="mt-auto text-center">
+                          <p className="text-gray-400 text-xs">
+                            Tap to see card front
+                          </p>
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  )}
                 </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
 
-          <button
-            className="mt-4 p-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-400"
-            onClick={() => setSelectedPack(null)}
-          >
-            Back to Packs
-          </button>
-        </div>
-      )}
+            <button
+              className="mt-8 py-2 px-6 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors shadow-lg flex items-center"
+              onClick={() => setSelectedPack(null)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Back to Packs
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

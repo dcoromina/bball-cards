@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import CurryBrand from "/public/images/curry-logo.png";
 import Cavs1 from "/public/teams/cavs-2010-2017.png";
 import Cavs2 from "/public/teams/cavs-present.png";
@@ -14,249 +14,317 @@ import packNba from "/public/trading-nba.png";
 import allstar from "/public/images/alstar.png";
 import champ from "/public/images/champ.png";
 import mvp from "/public/images/mvp.png";
+import camera from "/public/images/camera.png";
 import card1 from "/public/cards/roy.png";
 import card2 from "/public/cards/international.png";
 import packEuro from "/public/trading-euro.png";
 import Cards from "@/components/data";
-import {
-  AnimatePresence,
-  delay,
-  motion,
-  stagger,
-  useAnimation,
-} from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 // Modal Component
 const Modal = ({ isOpen, onClose, content }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const [activeVariant, setActiveVariant] = useState();
+  const [activeVariant, setActiveVariant] = useState(content);
   const [isFlipped, setIsFlipped] = useState(false);
-  const controls = useAnimation();
+  const [isHovered, setIsHovered] = useState(false);
+  const [variants, setVariants] = useState([]);
+  const carouselRef = useRef(null);
+  const [dragConstraints, setDragConstraints] = useState(0);
 
-  const cardVariants = {
-    initial: {
-      opacity: 0, // Hidden initially
-      scale: 0.8, // Smaller initially
-      rotate: -10, // Slight rotation
-    },
-    animate: {
-      opacity: 1, // Fully visible
-      scale: 1, // Normal size
-      rotate: 0, // Straight orientation
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 20,
-        duration: 0.5,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -200, // Moves up and fades away
-      transition: { duration: 0.5 },
-    },
+  // Find all variants of the selected card
+  useEffect(() => {
+    if (content && content.name) {
+      // Find related cards with the same name (variants)
+      const cardVariants = Cards.filter((card) => card.name === content.name);
+      setVariants(cardVariants.length > 0 ? cardVariants : [content]);
+      setActiveVariant(content);
+    }
+  }, [content]);
+
+  // Set up drag constraints for the card selector
+  useEffect(() => {
+    if (carouselRef.current) {
+      const { scrollWidth, offsetWidth } = carouselRef.current;
+      setDragConstraints(-(scrollWidth - offsetWidth));
+    }
+  }, [variants, carouselRef]);
+
+  // Simplified flip handler - just toggles the state
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
   };
 
-  const handleFlip = async () => {
-    setIsFlipped((prev) => !prev);
-    // Animation sequence
-    await controls.start({ rotateY: 90, transition: { duration: 0.3 } });
-    controls.start({
-      rotateY: isFlipped ? 0 : 180,
-      transition: { duration: 0.7 },
-    });
+  const handleVariantSelect = (variant) => {
+    setActiveVariant(variant);
+    setIsFlipped(false); // Reset to front face when changing cards
   };
 
   if (!isOpen) return null;
 
   return (
-    <>
-      <div
-        className="fixed w-full h-full inset-0 bg-black/50 backdrop-blur-sm z-10 overscroll-contain overflow-y-hidden
-          "
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 flex items-center justify-center"
         onClick={onClose}
-      />
-      <div className="">
-        <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 space-y-3">
+      >
+        <motion.div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-4"
+          onClick={(e) => e.stopPropagation()}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", damping: 25 }}
+        >
+          {/* Close button */}
+          <button
+            className="absolute top-4 right-4 z-50 bg-gray-800/80 rounded-full p-2 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
+            onClick={onClose}
+          >
+            <X size={24} />
+          </button>
+
+          {/* Main card display - now just toggling between front and back */}
           <motion.div
-            id="card"
-            className=" w-72  h-[420px] "
-            variants={cardVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={{ duration: 1 }}
+            className="w-72 h-[420px]"
+            initial={{ y: -20 }}
+            animate={{ y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             onClick={handleFlip}
           >
-            <motion.div
-              className="w-full h-full p-2 bg-white rounded-lg shadow-md"
-              style={{ transformStyle: "preserve-3d" }}
-              animate={controls}
-            >
-              {/* Front Face */}
-              {content.variant === "poster" ? (
-                <div
-                  className=""
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  {!isHovered && (
-                    <div className="">
-                      <Image
-                        className="h-full w-full  rounded-md relative top-0 left-0"
-                        alt="alt"
-                        src={content.image}
-                        style={{ backfaceVisibility: "hidden" }}
-                      />
-                      <motion.div
-                        initial={{
-                          opacity: 0,
-                          scale: 0.5,
-                          y: -350,
-                          x: 30,
-                        }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 20,
-                          duration: 0.9,
-                          delay: 0.3,
-                        }}
-                      >
+            {!isFlipped ? (
+              // Front Face - shown when not flipped
+              <div className="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+                {activeVariant?.variant === "poster" ? (
+                  <div
+                    className="w-full h-full relative"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    {!isHovered ? (
+                      <>
                         <Image
-                          alt=""
-                          src={camera}
-                          className="absolute z-50 -top-7 -right-3 w-24 rotate-12"
+                          className="h-full w-full object-cover"
+                          alt={activeVariant.name || "Card"}
+                          src={activeVariant.image}
+                          priority
                         />
-                      </motion.div>
-                    </div>
-                  )}
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.5, y: -350, x: 30 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            damping: 20,
+                            delay: 0.3,
+                          }}
+                          className="absolute z-10"
+                        >
+                          <Image
+                            alt="Camera"
+                            src={camera}
+                            className="absolute -top-7 -right-3 w-24 rotate-12"
+                          />
+                        </motion.div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full bg-black rounded-2xl overflow-hidden">
+                        <video
+                          src={"/videos/vidja.mp4"}
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Image
+                    className="h-full w-full object-cover"
+                    alt={activeVariant?.name || "Card"}
+                    src={activeVariant?.image}
+                    priority
+                  />
+                )}
 
-                  {/* Video on Hover */}
-                  {isHovered && (
-                    <div className="bg-white">
-                      <video
-                        src={"/videos/vidja.mp4"}
-                        className="absolute inset-0 w-full h-full object-cover z-20 rounded-lg p-1"
-                        autoPlay
-                        muted
-                        loop
-                      />
-                    </div>
-                  )}
+                {/* Tap indicator */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent">
+                  <p className="text-white text-sm text-center">
+                    Tap to see details
+                  </p>
                 </div>
-              ) : (
-                <Image
-                  className="h-full w-full  rounded-md relative top-0 left-0"
-                  alt="alt"
-                  src={content.image}
-                  style={{ backfaceVisibility: "hidden" }}
-                />
-              )}
-
-              {/* Back Face */}
-
-              <motion.div
-                className="absolute w-full h-full top-0 rounded-lg  left-0 flex items-center justify-center text-white font-bold text-xl"
-                style={{
-                  backfaceVisibility: "hidden",
-                  transform: "rotateY(180deg)",
-                }}
-              >
-                <div
-                  className="
-                      overflow-y-hidden
-                    bg-white
-                    rounded-lg 
-                    p-2
-                    shadow-xl
-                    w-full
-                    h-full
-                  "
-                >
-                  <div className="bg-gray-600 w-full h-full rounded-md p-2">
-                    <div className="flex flex-row">
-                      {" "}
-                      <h2 className="text-2xl font-bold mb-4">
-                        {content.name}
-                      </h2>
+              </div>
+            ) : (
+              // Back Face - shown when flipped
+              <div className="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div className="h-full bg-gradient-to-br from-gray-800 to-gray-900 p-4 flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold text-white">
+                      {activeVariant?.name}
+                    </h2>
+                    <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded">
+                      {activeVariant?.pack?.toUpperCase()}
                     </div>
+                  </div>
 
-                    <div className="space-y-3">
-                      <p className="font-semibold">
-                        Num:
-                        <span className="font-normal ml-2">
-                          {content.number}
-                        </span>
-                      </p>
-                      <p className="font-semibold">
-                        Team:
-                        <span className="font-normal ml-2">{content.team}</span>
-                      </p>
-                    </div>
-                    <div className="inline-grid grid-rows-6 grid-cols-3 place-items-center w-full  ">
-                      {" "}
-                      <div className="h-20 w-20 relative" id="allstar">
-                        <Image
-                          className="relative w-fit h-fit"
-                          alt=""
-                          src={allstar}
-                          height={500}
-                          width={500}
-                        />
-                        <p className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-black ">
-                          18
-                        </p>
+                  <div className="bg-gray-700/50 rounded-lg p-3 mb-4">
+                    <div className="grid grid-cols-2 gap-2 text-white">
+                      <div>
+                        <p className="text-gray-400 text-xs">NUMBER</p>
+                        <p className="font-semibold">{activeVariant?.number}</p>
                       </div>
-                      <div className="h-20 w-20  relative" id="champ">
-                        <Image
-                          className="relative w-fit h-full top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2"
-                          alt=""
-                          src={champ}
-                          height={500}
-                          width={500}
-                        />
-                        <p className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-black ">
-                          4
-                        </p>
-                      </div>
-                      <div className="h-20 w-20 relative" id="mvp">
-                        <Image
-                          className="relative h-full w-fit top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2"
-                          alt=""
-                          src={mvp}
-                        />
-                        <p className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-black ">
-                          3
-                        </p>
+                      <div>
+                        <p className="text-gray-400 text-xs">TEAM</p>
+                        <p className="font-semibold">{activeVariant?.team}</p>
                       </div>
                     </div>
                   </div>
+
+                  <div className="flex-1">
+                    <p className="text-gray-400 text-xs mb-2">ACHIEVEMENTS</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
+                        <div className="relative h-12 w-12 mb-1">
+                          <Image
+                            className="object-contain"
+                            alt="All Star"
+                            src={allstar}
+                            fill
+                          />
+                        </div>
+                        <p className="text-indigo-400 font-bold text-center">
+                          18
+                        </p>
+                        <p className="text-gray-400 text-xs text-center">
+                          All Star
+                        </p>
+                      </div>
+                      <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
+                        <div className="relative h-12 w-12 mb-1">
+                          <Image
+                            className="object-contain"
+                            alt="Championships"
+                            src={champ}
+                            fill
+                          />
+                        </div>
+                        <p className="text-indigo-400 font-bold text-center">
+                          4
+                        </p>
+                        <p className="text-gray-400 text-xs text-center">
+                          Champ
+                        </p>
+                      </div>
+                      <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
+                        <div className="relative h-12 w-12 mb-1">
+                          <Image
+                            className="object-contain"
+                            alt="MVP"
+                            src={mvp}
+                            fill
+                          />
+                        </div>
+                        <p className="text-indigo-400 font-bold text-center">
+                          3
+                        </p>
+                        <p className="text-gray-400 text-xs text-center">MVP</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto text-center">
+                    <p className="text-gray-400 text-xs">
+                      Tap to see card front
+                    </p>
+                  </div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            )}
           </motion.div>
-          <div className="flex fixed gap-3 items-center justify-center overflow-x-auto  z-50">
-            <div className="w-24 h-fit  rounded-md">
-              <Image alt="" src={card1} className="rounded-md" />
+
+          {/* Card variant selector carousel */}
+          {variants.length > 1 && (
+            <div className="mt-8 w-full max-w-md">
+              <div className="relative">
+                {/* Left scroll button */}
+                <button
+                  className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-gray-800/80 rounded-full p-1.5 text-white shadow-lg"
+                  onClick={() => {
+                    if (carouselRef.current) {
+                      carouselRef.current.scrollBy({
+                        left: -100,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                {/* Scrollable cards container */}
+                <div className="relative overflow-hidden mx-6">
+                  <motion.div
+                    ref={carouselRef}
+                    className="flex gap-3 p-2 overflow-x-auto scrollbar-hide"
+                    drag="x"
+                    dragConstraints={{ right: 0, left: dragConstraints }}
+                    style={{ cursor: "grab" }}
+                  >
+                    {variants.map((variant, index) => (
+                      <motion.div
+                        key={variant.id || index}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`min-w-[5rem] h-24 rounded-lg overflow-hidden cursor-pointer flex-shrink-0 transition-all relative
+                          ${
+                            activeVariant?.id === variant.id
+                              ? "ring-2 ring-indigo-500 scale-105"
+                              : "opacity-80"
+                          }`}
+                        onClick={() => handleVariantSelect(variant)}
+                      >
+                        <Image
+                          src={variant.image}
+                          alt={variant.name || `Variant ${index}`}
+                          className="w-full h-full object-cover"
+                          width={80}
+                          height={120}
+                        />
+                        {variant.variant && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/70 py-0.5 px-1">
+                            <p className="text-white text-[0.6rem] text-center">
+                              {variant.variant}
+                            </p>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+
+                {/* Right scroll button */}
+                <button
+                  className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-gray-800/80 rounded-full p-1.5 text-white shadow-lg"
+                  onClick={() => {
+                    if (carouselRef.current) {
+                      carouselRef.current.scrollBy({
+                        left: 100,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
             </div>
-            <div className="w-24 h-fit  rounded-md">
-              <Image alt="" src={card2} className="rounded-md" />
-            </div>{" "}
-            <div className="w-24 h-fit  rounded-md">
-              <Image alt="" src={card1} className="rounded-md" />
-            </div>{" "}
-            <div className="w-24 h-fit  rounded-md">
-              <Image alt="" src={card2} className="rounded-md" />
-            </div>{" "}
-            <div className="w-24 h-fit  rounded-md">
-              <Image alt="" src={card1} className="rounded-md" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

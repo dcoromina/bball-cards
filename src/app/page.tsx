@@ -30,5 +30,10 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  return <TestCard />;
+  return (
+    <div className="">
+      <MainInfo />
+      <TestCard />
+    </div>
+  );
 }

@@ -23,7 +23,7 @@ const withAuth = (WrappedComponent) => {
     }, [router]);
 
     if (isLoading) {
-      return <div>Loading...</div>;
+      return <div className="loading loading-spinner loading-lg"></div>;
     }
 
     return user ? <WrappedComponent {...props} /> : null;
