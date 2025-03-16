@@ -88,7 +88,7 @@ const Modal = ({ isOpen, onClose, content }) => {
 
           {/* Main card display - now just toggling between front and back */}
           <motion.div
-            className="w-72 h-[420px]"
+            className="w-72 aspect-[2/3]"
             initial={{ y: -20 }}
             animate={{ y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
@@ -96,7 +96,7 @@ const Modal = ({ isOpen, onClose, content }) => {
           >
             {!isFlipped ? (
               // Front Face - shown when not flipped
-              <div className="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden">
                 {activeVariant?.variant === "poster" ? (
                   <div
                     className="w-full h-full relative"
@@ -143,19 +143,12 @@ const Modal = ({ isOpen, onClose, content }) => {
                   </div>
                 ) : (
                   <Image
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-fill border-8 border-white rounded-2xl"
                     alt={activeVariant?.name || "Card"}
                     src={activeVariant?.image}
                     priority
                   />
                 )}
-
-                {/* Tap indicator */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent">
-                  <p className="text-white text-sm text-center">
-                    Tap to see details
-                  </p>
-                </div>
               </div>
             ) : (
               // Back Face - shown when flipped
@@ -234,12 +227,6 @@ const Modal = ({ isOpen, onClose, content }) => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="mt-auto text-center">
-                    <p className="text-gray-400 text-xs">
-                      Tap to see card front
-                    </p>
-                  </div>
                 </div>
               </div>
             )}
@@ -278,7 +265,7 @@ const Modal = ({ isOpen, onClose, content }) => {
                         key={variant.id || index}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`min-w-[5rem] h-24 rounded-lg overflow-hidden cursor-pointer flex-shrink-0 transition-all relative
+                        className={`min-w-[5rem] aspect-[2/3] rounded-lg overflow-hidden cursor-pointer flex-shrink-0 transition-all relative
                           ${
                             activeVariant?.id === variant.id
                               ? "ring-2 ring-indigo-500 scale-105"

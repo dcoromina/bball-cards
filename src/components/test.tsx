@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import NBA from "/public/images/nba.png";
 import EuroLeague from "/public/images/euroleague.png";
 import NCAA from "/public/images/ncaa.png";
@@ -12,32 +12,32 @@ import champ from "/public/images/champ.png";
 import mvp from "/public/images/mvp.png";
 import camera from "/public/images/camera.png";
 import packEuro from "/public/trading-euro.png";
-import clipJa from "/videos/vidja.mp4";
 import Cards from "@/components/data";
-import { supabase } from "../app/supabaseClient";
 import { useRouter } from "next/navigation";
-import withAuth from "./hoc";
+
+interface Card {
+  id?: number;
+  name: string;
+  team: string;
+  number: string | number;
+  pack: string;
+  image: StaticImageData | string;
+  variant: string;
+  // Add other properties as needed
+}
 
 const CardOpeningPage = () => {
   const router = useRouter();
 
-  const [chosenPack, setChosenPack] = useState();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [finalResults, setFinalResults] = useState({});
+  const [finalResults, setFinalResults] = useState<Card>({} as Card);
 
-  const [selectedPack, setSelectedPack] = useState(null);
+  const [selectedPack, setSelectedPack] = useState<string | null>(null);
   const [isRipping, setIsRipping] = useState(false);
   const [revealCards, setRevealCards] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
 
   const [isFlipped, setIsFlipped] = useState(false);
-  const controls = useAnimation();
-  const [isHovered, setIsHovered] = useState(false);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/signin");
-  };
+  const [isHovered, setIsHovered] = useState(false);
 
   const cardVariants = {
     initial: {
@@ -96,7 +96,7 @@ const CardOpeningPage = () => {
     },
   ];
 
-  const handlePackSelect = (pack) => {
+  const handlePackSelect = (pack: string) => {
     setSelectedPack(pack);
     setIsRipping(false);
     setRevealCards(false);
@@ -114,32 +114,7 @@ const CardOpeningPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 flex flex-col">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-indigo-800 to-purple-900 p-4 shadow-md flex justify-between items-center">
-        <h1 className="text-white text-xl font-bold">Card Collection</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center space-x-1 text-sm"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
-          </svg>
-          <span>Logout</span>
-        </button>
-      </div>
-
+    <div className="h-full bg-gradient-to-br from-indigo-800 to-purple-700 flex flex-col overflow-hidden">
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-6">
         {!selectedPack ? (
@@ -147,11 +122,11 @@ const CardOpeningPage = () => {
             <h2 className="text-white text-2xl font-bold mb-8">
               Choose a Pack
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
               {packs.map((pack) => (
                 <div
                   key={pack.id}
-                  className="group relative overflow-hidden rounded-xl cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-2xl"
+                  className="group relative aspect-[2/3] overflow-hidden rounded-xl cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-2xl"
                   onClick={() => handlePackSelect(pack.category)}
                 >
                   <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70 z-10"></div>
@@ -191,7 +166,7 @@ const CardOpeningPage = () => {
               {!revealCards ? (
                 <motion.div
                   key={"pack"}
-                  className="relative w-72 h-[27rem] bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg shadow-2xl flex items-center justify-center overflow-hidden"
+                  className="relative w-72 aspect-[2/3] bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg shadow-2xl flex items-center justify-center overflow-hidden"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{
@@ -257,7 +232,7 @@ const CardOpeningPage = () => {
               ) : (
                 <motion.div
                   id="card"
-                  className="w-72 h-[420px]"
+                  className="w-72 aspect-[2/3]"
                   variants={cardVariants}
                   initial="initial"
                   animate="animate"

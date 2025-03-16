@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cards from "@/components/data";
 import NBA from "/public/images/nba.png";
 import EuroLeague from "/public/images/euroleague.png";
@@ -9,15 +9,25 @@ import { motion } from "framer-motion";
 import Modal from "@/components/modal";
 
 export default function CardGrid() {
-  // State variables remain the same
   const [zoomedId, setZoomedId] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
   const [variantName, setVariantName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [league, setLeague] = useState("nba");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedVariant, setSelectedVariant] = useState("all");
 
-  // Animation variants remain the same
+  // Get all available variants for the current league
+  const getAvailableVariants = () => {
+    const variantsInLeague = Cards.filter((card) => card.pack === league)
+      .map((card) => card.variant)
+      .filter((value, index, self) => self.indexOf(value) === index); // remove duplicates
+
+    return ["all", ...variantsInLeague];
+  };
+
+  // Animation variants
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
@@ -32,13 +42,30 @@ export default function CardGrid() {
     },
   };
 
-  const handleItemClick = (
-    id: number | React.SetStateAction<null>,
-    name: string
-  ) => {
-    setSelectedId(id as null); // Type assertion to match state type
+  // Reset variant filter when league changes
+  useEffect(() => {
+    setSelectedVariant("all");
+  }, [league]);
+
+  const handleBackgroundClick = () => {
+    if (showDetails) {
+      setShowDetails(true);
+    }
+  };
+
+  const closeClick = () => {
+    setZoomedId(null);
+    setShowDetails(false);
+  };
+
+  const handleItemClick = (id: number, name: string) => {
+    setSelectedId(id);
     setVariantName(name);
     setIsModalOpen(true);
+  };
+
+  const handleVariantSelect = (variant: string) => {
+    setSelectedVariant(variant);
   };
 
   const leagues = [
@@ -47,14 +74,18 @@ export default function CardGrid() {
     { id: "euro", name: "EuroLeague", logo: EuroLeague },
   ];
 
+  // Updated filterCards logic to include variant filtering
   const filteredCards = Cards.filter(
     (c) =>
       c.pack === league &&
-      c.variant === "regular" &&
+      (selectedVariant === "all" || c.variant === selectedVariant) &&
       (searchTerm === "" ||
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.team.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  // Get list of variants for the selected league
+  const variantOptions = getAvailableVariants();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
@@ -64,56 +95,54 @@ export default function CardGrid() {
       </div>
 
       {/* Sticky Filter and Search Section */}
-      <div className="sticky top-0 z-40 transition-all duration-200">
-        {/* Background with blur effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-sm border-b border-gray-700 shadow-lg"></div>
-
-        {/* Content */}
-        <div className="relative pt-3 pb-3 px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-2">
-              {/* League Filter Tabs */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex space-x-1 bg-gray-800/70 p-1 rounded-lg">
+      <div className="sticky top-0 z-40 bg-gradient-to-br from-gray-900 to-gray-800 shadow-lg transition-all duration-200">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="mb-0">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-3">
+              {/* League Selection */}
+              <div className="bg-gray-800 p-3 rounded-xl shadow-md w-full sm:w-auto">
+                <div className="flex items-center justify-around gap-4">
                   {leagues.map((item) => (
-                    <button
+                    <motion.div
                       key={item.id}
                       onClick={() => setLeague(item.id)}
-                      className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                      className={`flex flex-col items-center p-2 rounded-lg cursor-pointer transition-all ${
                         league === item.id
-                          ? "bg-indigo-600 text-white"
-                          : "text-gray-400 hover:bg-gray-700/70 hover:text-gray-200"
+                          ? "bg-indigo-600"
+                          : "bg-gray-700 hover:bg-gray-600"
                       }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <Image
-                        src={item.logo}
-                        alt={item.name}
-                        width={20}
-                        height={20}
-                        className="w-5 h-5 object-contain"
-                      />
-                      <span className="text-sm font-medium">{item.name}</span>
-                    </button>
+                      <div className="w-10 h-10 relative">
+                        <Image
+                          alt={item.name}
+                          src={item.logo}
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <span className="text-xs mt-1 font-medium">
+                        {item.name}
+                      </span>
+                    </motion.div>
                   ))}
-                </div>
-
-                <div className="text-xs px-2 py-1 bg-indigo-600/50 rounded-full">
-                  {filteredCards.length}/
-                  {
-                    Cards.filter(
-                      (c) => c.pack === league && c.variant === "regular"
-                    ).length
-                  }{" "}
-                  Cards
                 </div>
               </div>
 
               {/* Search Bar */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="relative w-full sm:w-64">
+                <input
+                  type="text"
+                  placeholder="Search cards..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <div className="absolute right-3 top-2.5 text-gray-400">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -126,44 +155,72 @@ export default function CardGrid() {
                     />
                   </svg>
                 </div>
-                <input
-                  type="text"
-                  className="block w-full bg-gray-800/70 border border-gray-700 rounded-lg py-2 pl-10 pr-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Search by name or team..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
+              </div>
+            </div>
+
+            {/* Variant Filter Submenu - NEW */}
+            <div className="bg-gray-800/80 rounded-lg p-2 mb-3 overflow-x-auto">
+              <div className="flex space-x-2">
+                {variantOptions.map((variant) => (
                   <button
-                    title="Clear search"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
-                    onClick={() => setSearchTerm("")}
+                    key={variant}
+                    onClick={() => handleVariantSelect(variant)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
+                      selectedVariant === variant
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
+                    }`}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    {variant === "all"
+                      ? "All Variants"
+                      : variant.charAt(0).toUpperCase() + variant.slice(1)}
                   </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Collection Stats */}
+            <div className="bg-gray-800 rounded-lg p-3 flex justify-between items-center">
+              <div>
+                <span className="text-gray-400 text-sm">Showing </span>
+                <span className="font-bold text-white">
+                  {filteredCards.length} cards
+                </span>
+                <span className="text-gray-400 text-sm"> from </span>
+                <span className="font-bold text-indigo-400">
+                  {leagues.find((l) => l.id === league)?.name}
+                </span>
+                {selectedVariant !== "all" && (
+                  <>
+                    <span className="text-gray-400 text-sm"> / </span>
+                    <span className="font-bold text-purple-400">
+                      {selectedVariant.charAt(0).toUpperCase() +
+                        selectedVariant.slice(1)}
+                    </span>
+                  </>
                 )}
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-xs px-2 py-1 bg-indigo-600/50 rounded-full">
+                  {filteredCards.length}/
+                  {
+                    Cards.filter(
+                      (c) =>
+                        c.pack === league &&
+                        (selectedVariant === "all" ||
+                          c.variant === selectedVariant)
+                    ).length
+                  }{" "}
+                  Cards
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content with Cards */}
+      {/* Card Grid - Now in a separate container outside the sticky section */}
       <div className="max-w-7xl mx-auto px-4 pt-4 pb-24">
-        {/* Card Grid */}
         <div
           className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ${
             zoomedId !== null ? "relative" : ""
@@ -203,7 +260,6 @@ export default function CardGrid() {
               </motion.div>
             ))
           ) : (
-            // Empty state remains the same
             <div className="col-span-full text-center py-10">
               <p className="text-gray-400 text-lg">
                 No cards found. Try changing your filters.
@@ -212,7 +268,7 @@ export default function CardGrid() {
           )}
         </div>
 
-        {/* Empty state when no cards - remains the same */}
+        {/* Empty state when no cards */}
         {filteredCards.length === 0 && (
           <div className="text-center mt-12">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800 mb-4">
@@ -240,7 +296,7 @@ export default function CardGrid() {
         )}
       </div>
 
-      {/* Modal Component - remains the same */}
+      {/* Modal Component */}
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}

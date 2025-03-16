@@ -16,7 +16,8 @@ export default function MainInfo() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-indigo-600 items-center justify-between p-4 flex flex-row shadow-md">
+    <div className="bg-gradient-to-r from-indigo-800 to-purple-900 p-4 shadow-md flex justify-between items-center">
+      {" "}
       <div className="bg-white text-gray-800 py-2 px-4 rounded-lg shadow-md flex items-center">
         <div className="mr-2">
           <svg
@@ -32,7 +33,6 @@ export default function MainInfo() {
         <span className="font-medium">Cards Collected: </span>
         <span className="ml-1 font-bold text-indigo-600">85/253</span>
       </div>
-
       <div
         onClick={() => setLogoutModal(!logoutModal)}
         className="rounded-full bg-white p-2 shadow-md cursor-pointer hover:bg-gray-100 transition-colors"
@@ -52,7 +52,6 @@ export default function MainInfo() {
           />
         </svg>
       </div>
-
       {logoutModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -67,22 +66,23 @@ export default function MainInfo() {
             </h3>
             <button
               onClick={handleLogout}
-              className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
+              className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center space-x-1 text-sm"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
                 <path
-                  fillRule="evenodd"
-                  d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7z"
-                  clipRule="evenodd"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                 />
-                <path d="M4 8a1 1 0 011-1h4a1 1 0 110 2H5a1 1 0 01-1-1z" />
               </svg>
-              Logout
+              <span>Logout</span>
             </button>
             <button
               onClick={() => setLogoutModal(false)}

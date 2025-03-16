@@ -10,6 +10,12 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
+// Define a Route type
+interface Route {
+  path: string;
+  // Add other properties if needed
+}
+
 const FloatingNavBar = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -23,28 +29,22 @@ const FloatingNavBar = () => {
     },
     {
       name: "cards",
-      path: "/cards",
+      path: "/grid",
       icon: GalleryHorizontalEndIcon,
       label: "Cards",
-    },
-    {
-      name: "packs",
-      path: "/grid",
-      icon: Package,
-      label: "Packs",
     },
   ];
 
   const getActiveTab = () => {
     if (pathname === "/") return "home";
-    if (pathname.includes("/cards")) return "cards";
-    if (pathname.includes("/grid")) return "packs";
+    if (pathname.includes("/grid")) return "cards";
     return "home";
   };
 
   const activeTab = getActiveTab();
 
-  const handleNavigation = (route) => {
+  // Update the function signature
+  const handleNavigation = (route: Route) => {
     router.push(route.path);
   };
 

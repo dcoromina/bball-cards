@@ -8,6 +8,15 @@ import NcaaRose from "/public/cards/ncaa-rose.png";
 import EuroMikeJames from "/public/cards/mjames.jpg";
 import JaPoster from "/public/cards/jaPoster.jpg";
 import JaCard from "/public/cards/jaCard.png";
+import AnthonyEdwards from "/public/cards/ant.png";
+import RudyInter from "/public/cards/rudyinter.jpg";
+import history from "/public/cards/history.png";
+import icon from "/public/cards/icon.png";
+import duo from "/public/cards/duo.png";
+import international from "/public/cards/international.png";
+import mvp from "/public/cards/mvp.png";
+import rookie from "/public/cards/roy.png";
+import poster from "/public/cards/poster.png";
 
 const data = [
   {
@@ -100,6 +109,87 @@ const data = [
     pack: "nba",
     image: JaCard,
     variant: "regular",
+  },
+  {
+    id: 10,
+    name: "Anthony Edwards",
+    team: "Minnesota Timberwolves",
+    number: 1,
+    pack: "nba",
+    image: AnthonyEdwards,
+    variant: "regular",
+  },
+  {
+    id: 11,
+    name: "Lebron James",
+    team: "Los Angeles Lakers",
+    number: 23,
+    pack: "nba",
+    image: history,
+    variant: "history",
+  },
+  {
+    id: 12,
+    name: "Lebron James",
+    team: "Los Angeles Lakers",
+    number: 23,
+    pack: "nba",
+    image: rookie,
+    variant: "rookie",
+  },
+  {
+    id: 13,
+    name: "Lebron James",
+    team: "Los Angeles Lakers",
+    number: 23,
+    pack: "nba",
+    image: icon,
+    variant: "icon",
+  },
+  {
+    id: 14,
+    name: "Lebron James",
+    team: "Los Angeles Lakers",
+    number: 23,
+    pack: "nba",
+    image: international,
+    variant: "international",
+  },
+  {
+    id: 15,
+    name: "Lebron James",
+    team: "Los Angeles Lakers",
+    number: 23,
+    pack: "nba",
+    image: mvp,
+    variant: "mvp",
+  },
+  {
+    id: 16,
+    name: "Lebron James",
+    team: "Los Angeles Lakers",
+    number: 23,
+    pack: "nba",
+    image: poster,
+    variant: "poster",
+  },
+  {
+    id: 17,
+    name: "Lebron James",
+    team: "Miami Heat",
+    number: 23,
+    pack: "nba",
+    image: duo,
+    variant: "duo",
+  },
+  {
+    id: 18,
+    name: "Rudy Fernandez",
+    team: "DKV",
+    number: 22,
+    pack: "euro",
+    image: RudyInter,
+    variant: "international",
   },
 ];
 export default data;
