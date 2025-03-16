@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cards from "@/components/data";
 import NBA from "/public/images/nba.png";
 import EuroLeague from "/public/images/euroleague.png";
@@ -9,13 +9,12 @@ import { motion } from "framer-motion";
 import Modal from "@/components/modal";
 
 export default function CardGrid() {
-  // Remove unused state variables
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [league, setLeague] = useState("nba");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Animation variants remain the same
+  // Animation variants
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
@@ -25,7 +24,7 @@ export default function CardGrid() {
     },
     hover: {
       scale: 1.05,
-      boxShadow: "0px 10px 20px rgba(0,0,0,0.2)",
+      boxShadow: "0px 10px 30px rgba(0,0,0,0.3)",
       transition: { duration: 0.2 },
     },
   };
@@ -51,47 +50,66 @@ export default function CardGrid() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-800 to-purple-900 p-4 shadow-md">
-        <h1 className="text-2xl font-bold text-center">My Card Collection</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white">
+      {/* Enhanced Header with TopStack Branding */}
+      <div className="bg-gradient-to-r from-indigo-800 via-purple-700 to-indigo-800 shadow-xl">
+        <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col items-center">
+          <motion.h1
+            className="text-3xl md:text-4xl font-bold text-center tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            TopStack
+          </motion.h1>
+          <motion.p
+            className="text-indigo-200 mt-1 text-sm font-medium"
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            Premium Digital Card Collection
+          </motion.p>
+        </div>
       </div>
 
-      {/* Sticky Filter and Search Section */}
-      <div className="sticky top-0 z-40 transition-all duration-200">
-        {/* Background with blur effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-sm border-b border-gray-700 shadow-lg"></div>
+      {/* Improved Sticky Filter and Search Section */}
+      <div className="sticky top-0 z-40 transition-all duration-300">
+        {/* Background with enhanced blur effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 to-indigo-950/95 backdrop-blur-md border-b border-indigo-900/50 shadow-lg"></div>
 
         {/* Content */}
-        <div className="relative pt-3 pb-3 px-4">
+        <div className="relative pt-4 pb-4 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="mb-2">
-              {/* League Filter Tabs */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex space-x-1 bg-gray-800/70 p-1 rounded-lg">
+              {/* Enhanced League Filter Tabs */}
+              <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                <div className="flex space-x-2 bg-slate-800/70 p-1.5 rounded-xl shadow-inner border border-indigo-950/50">
                   {leagues.map((item) => (
-                    <button
+                    <motion.button
                       key={item.id}
                       onClick={() => setLeague(item.id)}
-                      className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
                         league === item.id
-                          ? "bg-indigo-600 text-white"
-                          : "text-gray-400 hover:bg-gray-700/70 hover:text-gray-200"
+                          ? "bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-md"
+                          : "text-gray-300 hover:bg-slate-700/70 hover:text-white"
                       }`}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
                     >
                       <Image
                         src={item.logo}
                         alt={item.name}
-                        width={20}
-                        height={20}
+                        width={22}
+                        height={22}
                         className="w-5 h-5 object-contain"
                       />
                       <span className="text-sm font-medium">{item.name}</span>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
 
-                <div className="text-xs px-2 py-1 bg-indigo-600/50 rounded-full">
+                <div className="px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full shadow-md text-white font-medium text-sm">
                   {filteredCards.length}/
                   {
                     Cards.filter(
@@ -102,12 +120,12 @@ export default function CardGrid() {
                 </div>
               </div>
 
-              {/* Search Bar */}
+              {/* Improved Search Bar */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-400"
+                    className="h-5 w-5 text-indigo-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -122,15 +140,15 @@ export default function CardGrid() {
                 </div>
                 <input
                   type="text"
-                  className="block w-full bg-gray-800/70 border border-gray-700 rounded-lg py-2 pl-10 pr-3 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Search by name or team..."
+                  className="block w-full bg-slate-800/80 border border-indigo-900/50 rounded-xl py-2.5 pl-10 pr-10 text-sm placeholder-indigo-300/70 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-inner"
+                  placeholder="Search by player name or team..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {searchTerm && (
                   <button
                     title="Clear search"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-indigo-300 hover:text-white transition-colors"
                     onClick={() => setSearchTerm("")}
                   >
                     <svg
@@ -155,38 +173,36 @@ export default function CardGrid() {
         </div>
       </div>
 
-      {/* Main Content with Cards */}
-      <div className="max-w-7xl mx-auto px-4 pt-4 pb-24">
-        {/* Card Grid */}
-        <div
-          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4`}
-        >
+      {/* Enhanced Card Grid Section */}
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-24">
+        {/* Card Grid with improved spacing */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
           {filteredCards.length > 0 ? (
             filteredCards.map((card) => (
               <motion.div
                 key={card.id}
                 onClick={() => handleItemClick(card.id)}
-                className="relative aspect-[2/3] cursor-pointer bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-lg"
+                className="relative aspect-[2/3] cursor-pointer bg-gradient-to-br from-slate-800 to-indigo-900 rounded-xl overflow-hidden shadow-xl border border-indigo-800/30"
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
                 whileHover="hover"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-30 z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-40 z-10"></div>
                 <Image
                   alt={card.name}
                   src={card.image}
                   fill
-                  className="object-cover transition-transform"
+                  className="object-cover transition-all hover:scale-105 duration-700"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
                 />
-                <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent z-20">
-                  <p className="text-white text-xs font-medium truncate">
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 via-black/80 to-transparent z-20">
+                  <p className="text-white text-sm font-medium truncate">
                     {card.name}
                   </p>
                   <div className="flex justify-between items-center mt-1">
-                    <p className="text-gray-300 text-xs">{card.team}</p>
-                    <span className="bg-indigo-600 text-white text-xs px-1.5 py-0.5 rounded-sm">
+                    <p className="text-indigo-200 text-xs">{card.team}</p>
+                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs px-2 py-0.5 rounded-md shadow-sm">
                       #{card.number}
                     </span>
                   </div>
@@ -194,22 +210,26 @@ export default function CardGrid() {
               </motion.div>
             ))
           ) : (
-            // Empty state remains the same
             <div className="col-span-full text-center py-10">
-              <p className="text-gray-400 text-lg">
+              <p className="text-indigo-200 text-lg">
                 No cards found. Try changing your filters.
               </p>
             </div>
           )}
         </div>
 
-        {/* Empty state when no cards - remains the same */}
+        {/* Enhanced empty state */}
         {filteredCards.length === 0 && (
-          <div className="text-center mt-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-800 mb-4">
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-900/50 mb-4 border border-indigo-700/30 shadow-inner">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-gray-400"
+                className="h-10 w-10 text-indigo-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -222,16 +242,18 @@ export default function CardGrid() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium mb-2">No cards found</h3>
-            <p className="text-gray-400 max-w-md mx-auto">
+            <h3 className="text-xl font-medium mb-2 text-white">
+              No cards found
+            </h3>
+            <p className="text-indigo-200 max-w-md mx-auto">
               Try adjusting your search or filter criteria to find what
               you&apos;re looking for.
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
 
-      {/* Modal Component - remains the same */}
+      {/* Modal Component */}
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}

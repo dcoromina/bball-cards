@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import FloatingNavBar from "@/components/bottomNavbar";
+import { AuthProvider } from "@/context/AuthContext";
+import { ConditionalNavBar } from "@/components/ConditionalNavBar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -15,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Nba Card Game",
-  description: "Nba Card Game",
+  title: "TopStack",
+  description: "Collect digital cards",
 };
 
 export default function RootLayout({
@@ -27,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        {children}
-        <FloatingNavBar />
+        <AuthProvider>
+          {children}
+          <ConditionalNavBar />
+        </AuthProvider>
       </body>
     </html>
   );
