@@ -1,19 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import {
-  GalleryHorizontalEndIcon,
-  Home,
-  Star,
-  User,
-  Package,
-} from "lucide-react";
+import React from "react";
+import { GalleryHorizontalEndIcon, Home } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 // Define a Route type
 interface Route {
   path: string;
-  // Add other properties if needed
+  name: string;
+  icon: any;
+  label: string;
 }
 
 const FloatingNavBar = () => {
