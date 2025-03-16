@@ -1,29 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import CurryBrand from "/public/images/curry-logo.png";
-import Cavs1 from "/public/teams/cavs-2010-2017.png";
-import Cavs2 from "/public/teams/cavs-present.png";
-import Heat from "/public/teams/heat-logo.png";
-import Lakers from "/public/teams/lakers-logo.png";
+
 import Image from "next/image";
-import NBA from "/public/images/nba.png";
-import EuroLeague from "/public/images/euroleague.png";
-import NCAA from "/public/images/ncaa.png";
-import packNcaa from "/public/trading-ncaa.png";
-import packNba from "/public/trading-nba.png";
+
 import allstar from "/public/images/alstar.png";
 import champ from "/public/images/champ.png";
 import mvp from "/public/images/mvp.png";
 import camera from "/public/images/camera.png";
-import card1 from "/public/cards/roy.png";
-import card2 from "/public/cards/international.png";
-import packEuro from "/public/trading-euro.png";
+
 import Cards from "@/components/data";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Modal Component
 const Modal = ({ isOpen, onClose, content }) => {
-  const [showDetails, setShowDetails] = useState(false);
   const [activeVariant, setActiveVariant] = useState(content);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isHovered, setIsHovered] = useState(false);

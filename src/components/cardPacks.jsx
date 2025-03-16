@@ -17,7 +17,6 @@ const packs = [
 ];
 
 export default function CardPacks() {
-  const [chosenPack, setChosenPack] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [finalResults, setFinalResults] = useState({});
 

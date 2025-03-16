@@ -17,10 +17,10 @@ const SignInPage = () => {
     setIsClient(true);
   }, []);
 
-  const handleSignIn = async (e) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { error, user } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -87,11 +87,11 @@ const SignInPage = () => {
           </button>
         </form>
 
-        <p className="text-sm text-center text-gray-600 mt-4">
-          Don't have an account?{" "}
+        <p className="text-gray-500">
+          Don&apos;t have an account?{" "}
           <a
             href="/signup"
-            className="text-green-500 hover:underline font-semibold"
+            className="text-indigo-600 hover:underline font-semibold"
           >
             Sign Up
           </a>

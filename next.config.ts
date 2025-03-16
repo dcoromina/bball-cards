@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 module.exports = {
   experimental: {
-    middlewarePrefetch: true,
+    middlewarePrefetch: "strict",
   },
 };
 

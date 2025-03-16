@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { GalleryHorizontalEndIcon, Home } from "lucide-react";
+import { GalleryHorizontalEndIcon, Home, LucideIcon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 interface Route {
   path: string;
   name: string;
-  icon: any;
+  icon: LucideIcon;
   label: string;
 }
 

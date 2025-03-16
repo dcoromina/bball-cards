@@ -9,11 +9,9 @@ import { motion } from "framer-motion";
 import Modal from "@/components/modal";
 
 export default function CardGrid() {
-  // State variables remain the same
-  const [zoomedId, setZoomedId] = useState(null);
-  const [variantName, setVariantName] = useState("");
+  // Remove unused state variables
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [league, setLeague] = useState("nba");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -32,12 +30,8 @@ export default function CardGrid() {
     },
   };
 
-  const handleItemClick = (
-    id: number | React.SetStateAction<null>,
-    name: string
-  ) => {
-    setSelectedId(id as null); // Type assertion to match state type
-    setVariantName(name);
+  const handleItemClick = (id: number) => {
+    setSelectedId(id);
     setIsModalOpen(true);
   };
 
@@ -165,21 +159,18 @@ export default function CardGrid() {
       <div className="max-w-7xl mx-auto px-4 pt-4 pb-24">
         {/* Card Grid */}
         <div
-          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ${
-            zoomedId !== null ? "relative" : ""
-          }`}
+          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4`}
         >
           {filteredCards.length > 0 ? (
             filteredCards.map((card) => (
               <motion.div
                 key={card.id}
-                onClick={() => handleItemClick(card.id, card.name)}
+                onClick={() => handleItemClick(card.id)}
                 className="relative aspect-[2/3] cursor-pointer bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-lg"
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
                 whileHover="hover"
-                layoutId={`card-${card.id}`}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-30 z-10"></div>
                 <Image
@@ -233,8 +224,8 @@ export default function CardGrid() {
             </div>
             <h3 className="text-lg font-medium mb-2">No cards found</h3>
             <p className="text-gray-400 max-w-md mx-auto">
-              Try adjusting your search or filter criteria to find what you're
-              looking for.
+              Try adjusting your search or filter criteria to find what
+              you&apos;re looking for.
             </p>
           </div>
         )}

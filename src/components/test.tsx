@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image, { StaticImageData } from "next/image";
 import NBA from "/public/images/nba.png";
 import EuroLeague from "/public/images/euroleague.png";
@@ -13,7 +13,6 @@ import mvp from "/public/images/mvp.png";
 import camera from "/public/images/camera.png";
 import packEuro from "/public/trading-euro.png";
 import Cards from "@/components/data";
-import { useRouter } from "next/navigation";
 
 interface Card {
   id?: number;
@@ -27,8 +26,6 @@ interface Card {
 }
 
 const CardOpeningPage = () => {
-  const router = useRouter();
-
   const [finalResults, setFinalResults] = useState<Card>({} as Card);
 
   const [selectedPack, setSelectedPack] = useState<string | null>(null);

@@ -1,8 +1,5 @@
 "use client";
-import Image from "next/image";
-import CardGrid from "./grid/page";
-import LeagueNav from "./leagueNav";
-import CardPacks from "@/components/cardPacks";
+
 import MainInfo from "@/components/mainInfo";
 import TestCard from "@/components/test";
 import { useRouter } from "next/navigation";

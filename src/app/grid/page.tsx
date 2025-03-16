@@ -9,9 +9,6 @@ import { motion } from "framer-motion";
 import Modal from "@/components/modal";
 
 export default function CardGrid() {
-  const [zoomedId, setZoomedId] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [variantName, setVariantName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [league, setLeague] = useState("nba");
@@ -47,20 +44,8 @@ export default function CardGrid() {
     setSelectedVariant("all");
   }, [league]);
 
-  const handleBackgroundClick = () => {
-    if (showDetails) {
-      setShowDetails(true);
-    }
-  };
-
-  const closeClick = () => {
-    setZoomedId(null);
-    setShowDetails(false);
-  };
-
-  const handleItemClick = (id: number, name: string) => {
+  const handleItemClick = (id: number) => {
     setSelectedId(id);
-    setVariantName(name);
     setIsModalOpen(true);
   };
 
@@ -222,15 +207,13 @@ export default function CardGrid() {
       {/* Card Grid - Now in a separate container outside the sticky section */}
       <div className="max-w-7xl mx-auto px-4 pt-4 pb-24">
         <div
-          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ${
-            zoomedId !== null ? "relative" : ""
-          }`}
+          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4`}
         >
           {filteredCards.length > 0 ? (
             filteredCards.map((card) => (
               <motion.div
                 key={card.id}
-                onClick={() => handleItemClick(card.id, card.name)}
+                onClick={() => handleItemClick(card.id)}
                 className="relative aspect-[2/3] cursor-pointer bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden shadow-lg"
                 variants={cardVariants}
                 initial="hidden"
@@ -289,8 +272,8 @@ export default function CardGrid() {
             </div>
             <h3 className="text-lg font-medium mb-2">No cards found</h3>
             <p className="text-gray-400 max-w-md mx-auto">
-              Try adjusting your search or filter criteria to find what you're
-              looking for.
+              Try adjusting your search or filter criteria to find what
+              you&apos;re looking for.
             </p>
           </div>
         )}
