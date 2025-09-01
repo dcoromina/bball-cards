@@ -1,13 +1,12 @@
 import type { NextConfig } from "next";
 
-module.exports = {
+const nextConfig: NextConfig = {
   experimental: {
     middlewarePrefetch: "strict",
   },
-};
-
-const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ['localhost'],
+  },
 };
 
 export default nextConfig;

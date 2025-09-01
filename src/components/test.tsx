@@ -22,18 +22,14 @@ interface Card {
   pack: string;
   image: StaticImageData | string;
   variant: string;
-  // Add other properties as needed
 }
 
 const CardOpeningPage = () => {
   const [finalResults, setFinalResults] = useState<Card>({} as Card);
-
   const [selectedPack, setSelectedPack] = useState<string | null>(null);
   const [isRipping, setIsRipping] = useState(false);
   const [revealCards, setRevealCards] = useState(false);
-
   const [isFlipped, setIsFlipped] = useState(false);
-
   const [isHovered, setIsHovered] = useState(false);
 
   const cardVariants = {
@@ -74,6 +70,7 @@ const CardOpeningPage = () => {
       bg: packNba,
       name: "NBA Premium",
       cardCount: 5,
+      color: "from-nba-blue to-nba-red",
     },
     {
       id: 2,
@@ -82,6 +79,7 @@ const CardOpeningPage = () => {
       bg: packEuro,
       name: "EuroLeague Elite",
       cardCount: 5,
+      color: "from-blue-600 to-indigo-700",
     },
     {
       id: 3,
@@ -90,6 +88,7 @@ const CardOpeningPage = () => {
       bg: packNcaa,
       name: "NCAA Stars",
       cardCount: 5,
+      color: "from-green-600 to-emerald-700",
     },
   ];
 
@@ -104,66 +103,117 @@ const CardOpeningPage = () => {
   };
 
   const handleRipStart = () => setIsRipping(true);
-
   const handleRipEnd = () => {
     setIsRipping(false);
     setRevealCards(true);
   };
 
   return (
-    <div className="h-full bg-gradient-to-br from-indigo-800 to-purple-700 flex flex-col overflow-hidden">
+    <div className="flex-1 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col overflow-hidden relative">
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.4, 0.2, 0.4],
+          }}
+          transition={{ duration: 8, repeat: Infinity, delay: 4 }}
+        />
+      </div>
+
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex-1 flex items-center justify-center p-6 relative z-10">
         {!selectedPack ? (
-          <div className="flex flex-col items-center">
-            <h2 className="text-white text-2xl font-bold mb-8">
-              Choose a Pack
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-              {packs.map((pack) => (
-                <div
+          <motion.div
+            className="flex flex-col items-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.h2
+              className="text-white text-4xl font-bold mb-12 text-center"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              Choose Your Pack
+            </motion.h2>
+            <motion.p
+              className="text-indigo-200 text-lg mb-12 text-center max-w-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              Select from our premium collection packs and discover legendary
+              players
+            </motion.p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+              {packs.map((pack, index) => (
+                <motion.div
                   key={pack.id}
-                  className="group relative aspect-[2/3] overflow-hidden rounded-xl cursor-pointer transform transition-all duration-300 hover:scale-105 shadow-2xl"
+                  className="group relative aspect-[2/3] overflow-hidden rounded-2xl cursor-pointer transform transition-all duration-500 hover:scale-105 shadow-2xl"
                   onClick={() => handlePackSelect(pack.category)}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                  whileHover={{
+                    scale: 1.05,
+                    y: -10,
+                    transition: { type: "spring", stiffness: 300, damping: 20 },
+                  }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70 z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 z-10"></div>
                   <Image
-                    className="w-full h-auto rounded-xl"
+                    className="w-full h-full object-cover rounded-2xl"
                     alt={pack.name}
                     width={300}
                     height={420}
                     src={pack.bg}
                   />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white z-20">
-                    <div className="flex items-center mb-2">
-                      <Image
-                        src={pack.logo}
-                        alt="logo"
-                        width={30}
-                        height={30}
-                        className="mr-2"
-                      />
-                      <h3 className="font-bold text-xl">{pack.name}</h3>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span>{pack.cardCount} cards per pack</span>
-                      <span className="bg-indigo-600 py-1 px-2 rounded group-hover:bg-indigo-500 transition-colors">
-                        Select
-                      </span>
-                    </div>
+
+                  {/* Pack Logo */}
+                  <motion.div
+                    className="absolute top-4 left-4 z-20"
+                    whileHover={{ scale: 1.1 }}
+                  ></motion.div>
+
+                  {/* Pack Info */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
+                    <h3 className="font-bold text-2xl mb-3">{pack.name}</h3>
                   </div>
-                </div>
+
+                  {/* Hover Effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-t from-indigo-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15"
+                    initial={false}
+                  />
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <div className="relative flex flex-col items-center max-w-md mx-auto">
+          <motion.div
+            className="relative flex flex-col items-center max-w-md mx-auto"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <AnimatePresence>
               {/* Card Opening */}
               {!revealCards ? (
                 <motion.div
                   key={"pack"}
-                  className="relative w-72 aspect-[2/3] bg-gradient-to-br from-indigo-600 to-purple-700 rounded-lg shadow-2xl flex items-center justify-center overflow-hidden"
+                  className="relative w-80 aspect-[2/3] bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden border-2 border-white/20"
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{
@@ -190,7 +240,7 @@ const CardOpeningPage = () => {
                     animate={isRipping ? { scale: 1.05, opacity: 0.9 } : {}}
                   >
                     <motion.div
-                      className="h-3 bg-white/10 w-full"
+                      className="h-3 bg-white/20 w-full rounded-full"
                       style={{ originY: 1 }}
                       animate={
                         isRipping
@@ -207,14 +257,25 @@ const CardOpeningPage = () => {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="text-white text-center p-4"
+                      className="text-white text-center p-6"
                     >
-                      <h3 className="font-bold text-xl mb-2">
+                      <h3 className="font-bold text-2xl mb-3">
                         {packs.find((p) => p.category === selectedPack)?.name}
                       </h3>
-                      <p className="text-sm text-white/80">
-                        Tap and hold to rip open
+                      <p className="text-white/80 text-sm mb-4">
+                        Tap and hold to rip open your pack
                       </p>
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
+                        <div
+                          className="w-2 h-2 bg-white/60 rounded-full animate-pulse"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-white/60 rounded-full animate-pulse"
+                          style={{ animationDelay: "0.4s" }}
+                        ></div>
+                      </div>
                     </motion.div>
                   </div>
                   <div
@@ -229,7 +290,7 @@ const CardOpeningPage = () => {
               ) : (
                 <motion.div
                   id="card"
-                  className="w-72 aspect-[2/3]"
+                  className="w-80 aspect-[2/3]"
                   variants={cardVariants}
                   initial="initial"
                   animate="animate"
@@ -239,7 +300,7 @@ const CardOpeningPage = () => {
                   whileHover={{ scale: 1.03 }}
                 >
                   {!isFlipped ? (
-                    <div className="w-full h-fit bg-white rounded-xl shadow-2xl overflow-hidden">
+                    <div className="w-full h-full bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-white">
                       {finalResults.variant === "poster" ? (
                         <div
                           className="w-full h-full relative"
@@ -276,8 +337,8 @@ const CardOpeningPage = () => {
                                   className="absolute -top-7 -right-3 w-24 rotate-12"
                                 />
                               </motion.div>
-                              <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent">
-                                <p className="text-white text-sm">
+                              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                                <p className="text-white text-sm font-medium">
                                   Tap to see card details
                                 </p>
                               </div>
@@ -304,8 +365,8 @@ const CardOpeningPage = () => {
                             alt="Card Front"
                             src={finalResults.image}
                           />
-                          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black to-transparent">
-                            <p className="text-white text-sm">
+                          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                            <p className="text-white text-sm font-medium">
                               Tap to see card details
                             </p>
                           </div>
@@ -313,28 +374,32 @@ const CardOpeningPage = () => {
                       )}
                     </div>
                   ) : (
-                    <div className="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden">
-                      <div className="h-full bg-gradient-to-br from-gray-800 to-gray-900 p-4 flex flex-col">
-                        <div className="flex items-center justify-between mb-4">
-                          <h2 className="text-2xl font-bold text-white">
+                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl overflow-hidden border-4 border-white">
+                      <div className="h-full p-6 flex flex-col">
+                        <div className="flex items-center justify-between mb-6">
+                          <h2 className="text-3xl font-bold text-white">
                             {finalResults.name}
                           </h2>
-                          <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded">
+                          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs px-3 py-2 rounded-lg font-semibold">
                             {finalResults.pack?.toUpperCase()}
                           </div>
                         </div>
 
-                        <div className="bg-gray-700/50 rounded-lg p-3 mb-4">
-                          <div className="grid grid-cols-2 gap-2 text-white">
+                        <div className="bg-gray-700/50 rounded-xl p-4 mb-6 backdrop-blur-sm">
+                          <div className="grid grid-cols-2 gap-4 text-white">
                             <div>
-                              <p className="text-gray-400 text-xs">NUMBER</p>
-                              <p className="font-semibold">
+                              <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">
+                                NUMBER
+                              </p>
+                              <p className="font-bold text-xl">
                                 {finalResults.number}
                               </p>
                             </div>
                             <div>
-                              <p className="text-gray-400 text-xs">TEAM</p>
-                              <p className="font-semibold">
+                              <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">
+                                TEAM
+                              </p>
+                              <p className="font-bold text-xl">
                                 {finalResults.team}
                               </p>
                             </div>
@@ -342,12 +407,12 @@ const CardOpeningPage = () => {
                         </div>
 
                         <div className="flex-1">
-                          <p className="text-gray-400 text-xs mb-2">
+                          <p className="text-gray-400 text-xs mb-4 font-medium uppercase tracking-wider">
                             ACHIEVEMENTS
                           </p>
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
-                              <div className="relative h-12 w-12 mb-1">
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="bg-gray-800/80 rounded-xl p-3 flex flex-col items-center justify-center backdrop-blur-sm border border-gray-700/50">
+                              <div className="relative h-12 w-12 mb-2">
                                 <Image
                                   className="object-contain"
                                   alt="All Star"
@@ -355,15 +420,15 @@ const CardOpeningPage = () => {
                                   fill
                                 />
                               </div>
-                              <p className="text-indigo-400 font-bold text-center">
+                              <p className="text-championship-gold font-bold text-center text-lg">
                                 18
                               </p>
                               <p className="text-gray-400 text-xs text-center">
                                 All Star
                               </p>
                             </div>
-                            <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
-                              <div className="relative h-12 w-12 mb-1">
+                            <div className="bg-gray-800/80 rounded-xl p-3 flex flex-col items-center justify-center backdrop-blur-sm border border-gray-700/50">
+                              <div className="relative h-12 w-12 mb-2">
                                 <Image
                                   className="object-contain"
                                   alt="Championships"
@@ -371,15 +436,15 @@ const CardOpeningPage = () => {
                                   fill
                                 />
                               </div>
-                              <p className="text-indigo-400 font-bold text-center">
+                              <p className="text-championship-gold font-bold text-center text-lg">
                                 4
                               </p>
                               <p className="text-gray-400 text-xs text-center">
                                 Champ
                               </p>
                             </div>
-                            <div className="bg-gray-800 rounded-lg p-2 flex flex-col items-center justify-center">
-                              <div className="relative h-12 w-12 mb-1">
+                            <div className="bg-gray-800/80 rounded-xl p-3 flex flex-col items-center justify-center backdrop-blur-sm border border-gray-700/50">
+                              <div className="relative h-12 w-12 mb-2">
                                 <Image
                                   className="object-contain"
                                   alt="MVP"
@@ -387,7 +452,7 @@ const CardOpeningPage = () => {
                                   fill
                                 />
                               </div>
-                              <p className="text-indigo-400 font-bold text-center">
+                              <p className="text-mvp-purple font-bold text-center text-lg">
                                 3
                               </p>
                               <p className="text-gray-400 text-xs text-center">
@@ -397,8 +462,8 @@ const CardOpeningPage = () => {
                           </div>
                         </div>
 
-                        <div className="mt-auto text-center">
-                          <p className="text-gray-400 text-xs">
+                        <div className="mt-6 text-center">
+                          <p className="text-gray-400 text-xs font-medium">
                             Tap to see card front
                           </p>
                         </div>
@@ -409,9 +474,11 @@ const CardOpeningPage = () => {
               )}
             </AnimatePresence>
 
-            <button
-              className="mt-8 py-2 px-6 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors shadow-lg flex items-center"
+            <motion.button
+              className="mt-10 py-3 px-8 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500 transition-all duration-200 shadow-lg hover:shadow-glow flex items-center font-semibold"
               onClick={() => setSelectedPack(null)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -428,8 +495,8 @@ const CardOpeningPage = () => {
                 />
               </svg>
               Back to Packs
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         )}
       </div>
     </div>

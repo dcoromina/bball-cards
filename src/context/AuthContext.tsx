@@ -1,10 +1,9 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { supabase } from "@/app/supabaseClient";
 import { useRouter, usePathname } from "next/navigation";
-
-type User = any; // Replace with your user type
+import { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
   user: User | null;
@@ -25,7 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   // Public routes that don't require authentication
-  const publicRoutes = ["/signin", "/signup"];
+  const publicRoutes = useMemo(() => ["/signin", "/signup"], []);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -64,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [pathname, router]);
+  }, [pathname, router, publicRoutes]);
 
   return (
     <AuthContext.Provider value={{ user, isLoading }}>

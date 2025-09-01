@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import FloatingNavBar from "@/components/bottomNavbar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ConditionalNavBar } from "@/components/ConditionalNavBar";
 

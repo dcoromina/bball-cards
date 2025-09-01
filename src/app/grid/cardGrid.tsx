@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Cards from "@/components/data";
 import NBA from "/public/images/nba.png";
 import EuroLeague from "/public/images/euroleague.png";
