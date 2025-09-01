@@ -17,6 +17,14 @@ import international from "/public/cards/international.png";
 import mvp from "/public/cards/mvp.png";
 import rookie from "/public/cards/roy.png";
 import poster from "/public/cards/poster.png";
+import dposter from "/public/cards/rose/poster.png";
+import dmvp from "/public/cards/rose/mvp.png";
+import drookie from "/public/cards/rose/roy.png";
+import dduo from "/public/cards/rose/duo.png";
+import dspot from "/public/cards/rose/spotlight.png";
+import dinternational from "/public/cards/rose/international.png";
+import dicon from "/public/cards/rose/iconic.png";
+import dregular from "/public/cards/rose/regular.png";
 
 const data = [
   {
@@ -190,6 +198,79 @@ const data = [
     pack: "euro",
     image: RudyInter,
     variant: "international",
+  },
+  {
+    id: 19,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 1,
+    pack: "nba",
+    image: dregular,
+    variant: "regular",
+  },
+  {
+    id: 20,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 1,
+    pack: "nba",
+    image: dspot,
+    variant: "spotlight",
+  },
+  {
+    id: 21,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 22,
+    pack: "nba",
+    image: dduo,
+    variant: "duo",
+  },
+  {
+    id: 22,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 22,
+    pack: "nba",
+    image: dicon,
+    variant: "iconic",
+  },
+  {
+    id: 23,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 22,
+    pack: "nba",
+    image: dinternational,
+    variant: "international",
+  },
+  {
+    id: 24,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 22,
+    pack: "nba",
+    image: dmvp,
+    variant: "mvp",
+  },
+  {
+    id: 25,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 22,
+    pack: "nba",
+    image: drookie,
+    variant: "rookie",
+  },
+
+  {
+    id: 26,
+    name: "Derrick Rose",
+    team: "chicago bulls",
+    number: 1,
+    pack: "nba",
+    image: dposter,
+    variant: "poster",
   },
 ];
 export default data;
