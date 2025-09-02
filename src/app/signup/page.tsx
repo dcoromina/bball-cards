@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -14,7 +13,6 @@ const SignUpPage = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [isClient, setIsClient] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);

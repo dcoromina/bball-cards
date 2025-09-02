@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "../app/supabaseClient";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import type { MouseEvent } from "react";
 
 export default function MainInfo() {
   const router = useRouter();
@@ -134,7 +135,7 @@ export default function MainInfo() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
